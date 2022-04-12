@@ -23,7 +23,19 @@ const userSchema = new mongoose.Schema( {
     // cars: [ String  ]
 }, { timestamps: true });
 
+
+// mongo-session1 assgnment
+
+const bookSchema = new mongoose.Schema( {
+    bookName: String,
+    authorName: String,
+    catagory: String,
+    year: Number
+}, { timestamps: true });
+
 module.exports = mongoose.model('User', userSchema) //users
+
+module.exports = mongoose.model('bookDatabase', bookSchema)
 
 
 

@@ -11,4 +11,11 @@ router.post("/createUser", UserController.createUser  )
 
 router.get("/getUsersData", UserController.getUsersData)
 
+
+// mongo-session1 assgnment
+
+router.post("/addBook", UserController.addBook)
+
+router.get("/allbookData", UserController.allbooksData)
+
 module.exports = router;
