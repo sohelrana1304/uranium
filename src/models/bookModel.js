@@ -1,6 +1,18 @@
 const mongoose = require('mongoose');
+// const { stringify } = require('nodemon/lib/utils');
 
 const bookSchema = new mongoose.Schema( {
+    
+    book_name: String,
+    author_id:{
+        type: Number,
+        required: true
+    },
+    price: Number,
+    ratings: Number
+
+
+    /*
     bookName: String, 
     authorName: String, 
     tags: [String],
@@ -19,9 +31,8 @@ const bookSchema = new mongoose.Schema( {
         // "ch3" : "intro to db"
     //  }
     summary :  mongoose.Schema.Types.Mixed,
-    isDeleted: Boolean //true on book deletion i.e you flag the document/data as isDeleted: true..(mark "dirty")
+    isDeleted: Boolean //true on book deletion i.e you flag the document/data as isDeleted: true..(mark "dirty")    */
 
 }, { timestamps: true });
 
-
-module.exports = mongoose.model('Book', bookSchema) //users
+module.exports = mongoose.model('newBook', bookSchema)

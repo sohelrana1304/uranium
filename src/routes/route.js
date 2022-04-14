@@ -8,6 +8,22 @@ router.get("/test-me", function (req, res) {
     res.send("My first ever api!")
 })
 
+// Assignmet
+
+router.post("/createNewAuthor", BookController.createNewAuthor)
+
+router.post("/createNewBook", BookController.createNewBook)
+
+router.get("/bookList", BookController.bookList)
+
+router.get("/updatedBookPrice", BookController.updatedBookPrice)
+
+router.get("/authorsName", BookController.authorsName)
+
+
+
+
+
 router.post("/createUser", UserController.createUser  )
 
 router.get("/getUsersData", UserController.getUsersData)
