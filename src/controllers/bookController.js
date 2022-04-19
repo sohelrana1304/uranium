@@ -1,4 +1,4 @@
-const authorModel = require("../models/authorModel")
+const authorModel = require("../models/batchModel")
 const bookModel= require("../models/bookModel")
 
 const createBook= async function (req, res) {
