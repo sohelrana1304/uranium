@@ -19,4 +19,4 @@ const userSchema = new mongoose.Schema( {
     posts: {type: [], deafult: []}
 }, { timestamps: true });
 
-module.exports = mongoose.model('UserMW', userSchema)
+module.exports = mongoose.model('UserMW', userSchema) //usermws
