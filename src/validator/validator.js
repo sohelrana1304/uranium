@@ -1,3 +1,5 @@
+// Validating inputs
+
 const isValid = function(value){
     if (typeof (value)==='undefined'|| typeof(value)=== null){
         return false
