@@ -117,5 +117,7 @@ const userLogin = async function(req, res){
     }
 }
 
+
+// Exporting all the handelers for using publically
 module.exports.createUser = createUser
 module.exports.userLogin = userLogin
