@@ -2,6 +2,7 @@ const userModel = require("../models/userModel")
 const validator = require("../validator/validator")
 const jwt = require("jsonwebtoken");
 
+// To create a user
 const createUser = async function (req, res) {
     try {
         const data = req.body
@@ -41,7 +42,7 @@ const createUser = async function (req, res) {
         // Checking the inputted email id from request body from existing database to avoid duplicacy 
         let findEmail = await userModel.findOne({ email: data.email })
         if (findEmail) {
-            return res.status(400).send({ status: false, msg: "Email is already registerd" })
+            return res.status(400).send({ status: false, msg: "Email id is already registerd" })
         }
 
         // This is the moblie no format for checking if the inputted mobile no 10 digited or not
@@ -57,7 +58,7 @@ const createUser = async function (req, res) {
 
         // Checking the inputted password's length and it should be 8 to 15 digits and contains atleast one uppercase or lowercase character
         let passwordPattern = /^(?=.*\d)(?=.*[a-zA-Z])[a-zA-Z0-9!@#$%&*]{8,15}$/;
-        if (!(passwordPattern.test(password))) {
+        if (!(passwordPattern.test(data.password))) {
             return res.status(400).send({ msg: "Password length should be 8 to 15 digits and enter atleast one uppercase or lowercase" })
         }
 
@@ -73,7 +74,7 @@ const createUser = async function (req, res) {
 }
 
 
-
+// Login for a user
 const userLogin = async function(req, res){
     try{
         const data = req.body
@@ -100,13 +101,13 @@ const userLogin = async function(req, res){
             return res.status(400).send({ status: false, msg: "Email id is not registered" })
         }
         // Checking the inputted phone no from request body from existing database for a valid user
-        let findMobile = await userModel.findOne({password: data.password})
-        if(!findMobile){
+        let findPassword = await userModel.findOne({password: data.password})
+        if(!findPassword){
             return res.status(400).send({ status: false, msg: "Password is not matched" })
         }
 
         // Generating a token after every successfull login and also adding token expiration time
-        let token = await jwt.sign({userId: findEmail._id.toString()}, "India", {expiresIn: '30s'})
+        let token = await jwt.sign({userId: findEmail._id.toString()}, "India", {expiresIn: '24h'})
         res.status(201).send({status: true, msg:"Log in successfull", token})
 
     }
