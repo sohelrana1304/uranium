@@ -3,6 +3,13 @@ const bookModel = require("../models/bookModel")
 const reviewModel = require("../models/reviewModel")
 const userModel = require("../models/userModel")
 const validator = require("../validator/validator")
+const mongoose = require('mongoose')
+
+
+// const isValidObjectId = (ObjectId) => {
+//     return mongoose.Types.ObjectId.isValid (ObjectId)
+// }
+
 
 // To create a book
 const createBook = async function (req, res) {
@@ -50,7 +57,7 @@ const createBook = async function (req, res) {
         }
 
         let uniqueUserId = await userModel.findById({ _id: userId }) // question?
-        console.log(uniqueUserId)
+        // console.log(uniqueUserId)
         if (!uniqueUserId) {
             return res.status(400).send({ status: false, message: "UserId is not exist in our data base" })
         }
@@ -61,7 +68,7 @@ const createBook = async function (req, res) {
         }
 
         let createBook = await bookModel.create(data)
-        return res.status(201).send({ status: false, message: "A new book has been created successfully", createBook })
+        return res.status(201).send({ status: true, message: "A new book has been created successfully", createBook })
 
     }
     catch (err) {
@@ -76,23 +83,22 @@ const getBook = async function (req, res) {
     try {
 
         let data = req.query
-        let searchFilter = [{ userId: data.userId }, { category: data.category }, { subcategory: data.subcategory }]
+        // let searchFilter = [{ userId: data.userId }, { category: data.category }, { subcategory: data.subcategory }]
 
-        if (!Object.keys(req.query).length) {
-            let books = await bookModel.find({ isDeleted: false })//.populate('authorId')
-            return res.status(200).send({ status: false, books })
-        }
+        // if (!Object.keys(req.query).length) {
+        //     let books = await bookModel.find({ isDeleted: false })//.populate('authorId')
+        //     return res.status(200).send({ status: false, books })
+        // }
 
-        let findBooks = await bookModel.find({ $or: searchFilter, isDeleted: false })
+        let findBooks = await bookModel.find(data,{ isDeleted: false })
             .select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1 }).sort({ "title": 1 })
 
+        
         if (findBooks.length == 0) {
             return res.status(404).send({ status: false, message: "No book found" })
         }
 
         return res.status(201).send({ status: true, message: "Book fetched successfully", data: findBooks })
-
-
     }
     catch (err) {
         console.log("This is the error :", err.message)
@@ -104,6 +110,10 @@ const getBookById = async function (req, res) {
     try {
         let bookId = req.params.bookId
 
+        if(!validator.isValidObjectId(bookId)){
+            return res.status(404).send({ status: false, message: "Book id is not valid" })
+        }
+
         let findBook = await bookModel.findById({ _id: bookId });//.select({__v: 0})
         // console.log(findBook)
         if (!findBook) {
@@ -111,7 +121,7 @@ const getBookById = async function (req, res) {
         }
 
         let findReviewsData = await reviewModel.find({ bookId: bookId }).select({ _id: 1, bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1 })
-        console.log(findReviewsData)
+        // console.log(findReviewsData)
 
         return res.status(201).send({
             status: true,
@@ -133,51 +143,6 @@ const getBookById = async function (req, res) {
             }
 
         })
-
-
-
-        // let findReviews = await bookModel.find({_id: findBook._id, isDeleted: false}).select({reviews: 1})
-        // let findReviews = await bookModel.find({ reviews: findBook.reviews, isDeleted: false }).select({ reviews: 1, _id: 0 })
-        // console.log(findReviews)
-        // if (findBook.reviews.length == 0) {
-        //     return res.status(201).send({
-        //         status: true,
-        //         message: "Book list",
-        //         data: {
-        //             "_id": findBook._id,
-        //             "title": findBook.title,
-        //             "excerpt": findBook.excerpt,
-        //             "userId": findBook.userId,
-        //             "category": findBook.category,
-        //             "subcategory": findBook.subcategory,
-        //             "deleted": findBook.isDeleted,
-        //             "reviews": findBook.reviews,
-        //             "deletedAt": findBook.deletedAt,
-        //             "releasedAt": findBook.releasedAt,
-        //             "createdAt": findBook.createdAt,
-        //             "updatedAt": findBook.updatedAt,
-        //             "reviewsData": findReviews,
-        //         }
-
-        //     })
-        // }
-
-        // let findReviews = await reviewModel.find({reviews: findBook.reviews})
-        // console.log(findReviews)
-        // return res.status(201).send({status: true, message:"Books list", findBook})
-
-        // findBook = JSON.parse(JSON.stringify(findBook.reviews))
-        // console.log(findBook)
-        // findBook = Object.keys(findBook.reviews)
-        // console.log(findBook)
-
-        // return res.status(201).send({
-        //     status: true,
-        //     message: "Book list",
-        //     data: findBook,
-        //     // "reviews": findReviews
-        // })
-
 
     }
     catch (err) {

@@ -1,4 +1,5 @@
 // Validating inputs
+const mongoose = require('mongoose')
 
 const isValid = function(value){
     if (typeof (value)==='undefined'|| typeof(value)=== null){
@@ -10,4 +11,11 @@ const isValid = function(value){
 
 }
 
+const isValidObjectId = (ObjectId) => {
+    return mongoose.Types.ObjectId.isValid (ObjectId)
+}
+
+
+
 module.exports.isValid = isValid;
+module.exports.isValidObjectId = isValidObjectId;

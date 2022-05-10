@@ -15,8 +15,6 @@ router.get("/books/:bookId", bookController.getBookById)
 
 
 
-
-
 router.post("/books/:bookId/review", reviewController.postReview)
 
 
