@@ -126,7 +126,7 @@ const getBookById = async function (req, res) {
         }
 
         // Finding the book with given book id from db
-        let findBook = await bookModel.findById({ _id: bookId }).lean()
+        let findBook = await bookModel.findById({ _id: bookId })//.lean()
         // console.log(findBook)
         if (!findBook) {
             return res.status(404).send({ status: false, message: "No book found" })
@@ -134,34 +134,34 @@ const getBookById = async function (req, res) {
 
         // Finding reviews from db and selecting required fields
         let findReviewsData = await reviewModel.find({ bookId: bookId })
-            .select({ _id: 1, bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1 })
+            .select({ _id: 1, bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1, })
         // console.log(findReviewsData)
 
-        findBook.reviewsData = findReviewsData
+        // findBook.reviewsData = findReviewsData
 
-        return res.status(201).send({ status: false, message: "No book found", data: findBook })
+        // return res.status(201).send({ status: true, message:"Book list", data: findBook })
 
         // Sending response according to project requirement
-        // return res.status(201).send({
-        //     status: true,
-        //     message: "Book list",
-        //     data: {
-        //         "_id": findBook._id,
-        //         "title": findBook.title,
-        //         "excerpt": findBook.excerpt,
-        //         "userId": findBook.userId,
-        //         "category": findBook.category,
-        //         "subcategory": findBook.subcategory,
-        //         "deleted": findBook.isDeleted,
-        //         "reviews": findBook.reviews,
-        //         "deletedAt": findBook.deletedAt,
-        //         "releasedAt": findBook.releasedAt,
-        //         "createdAt": findBook.createdAt,
-        //         "updatedAt": findBook.updatedAt,
-        //         "reviewsData": findReviewsData,
-        //     }
+        return res.status(201).send({
+            status: true,
+            message: "Book list",
+            data: {
+                "_id": findBook._id,
+                "title": findBook.title,
+                "excerpt": findBook.excerpt,
+                "userId": findBook.userId,
+                "category": findBook.category,
+                "subcategory": findBook.subcategory,
+                "deleted": findBook.isDeleted,
+                "reviews": findBook.reviews,
+                "deletedAt": findBook.deletedAt,
+                "releasedAt": findBook.releasedAt,
+                "createdAt": findBook.createdAt,
+                "updatedAt": findBook.updatedAt,
+                "reviewsData": findReviewsData,
+            }
 
-        // })
+        })
 
     }
     catch (err) {
