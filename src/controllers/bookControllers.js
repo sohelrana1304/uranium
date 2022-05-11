@@ -69,6 +69,12 @@ const createBook = async function (req, res) {
             return res.status(400).send({ status: false, message: "ISBN is already exist, input new ISBN" })
         }
 
+        //Date format("YYYY-MM-DD") validation
+        let dateRgx = /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/
+        if (!dateRgx.test(releasedAt)) {
+            return res.status(400).send({ status: false, message: "Please provide valid date format YYYY-MM-DD" });
+        }
+
         // Creating a new book
         let createBook = await bookModel.create(data)
         return res.status(201).send({ status: true, message: "A new book has been created successfully", createBook })
@@ -95,7 +101,7 @@ const getBook = async function (req, res) {
 
         // Finding books with inputted data from query and selecting required fields and sorting those books in Alphabatical order
         let findBooks = await bookModel.find(data, { isDeleted: false })
-            .select({ _id: 1, title: 1, excerpt: 1, userId: 1, category: 1, releasedAt: 1 }).sort({ "title": 1 })
+            .select({ subcategory: 0, createdAt: 0, updatedAt: 0, __v: 0 }).sort({ "title": 1 })
         // Checking the length of finded books
         if (findBooks.length == 0) {
             return res.status(404).send({ status: false, message: "No book found" })
@@ -120,7 +126,7 @@ const getBookById = async function (req, res) {
         }
 
         // Finding the book with given book id from db
-        let findBook = await bookModel.findById({ _id: bookId })
+        let findBook = await bookModel.findById({ _id: bookId }).lean()
         // console.log(findBook)
         if (!findBook) {
             return res.status(404).send({ status: false, message: "No book found" })
@@ -131,27 +137,31 @@ const getBookById = async function (req, res) {
             .select({ _id: 1, bookId: 1, reviewedBy: 1, reviewedAt: 1, rating: 1, review: 1 })
         // console.log(findReviewsData)
 
-        // Sending response according to project requirement
-        return res.status(201).send({
-            status: true,
-            message: "Book list",
-            data: {
-                "_id": findBook._id,
-                "title": findBook.title,
-                "excerpt": findBook.excerpt,
-                "userId": findBook.userId,
-                "category": findBook.category,
-                "subcategory": findBook.subcategory,
-                "deleted": findBook.isDeleted,
-                "reviews": findBook.reviews,
-                "deletedAt": findBook.deletedAt,
-                "releasedAt": findBook.releasedAt,
-                "createdAt": findBook.createdAt,
-                "updatedAt": findBook.updatedAt,
-                "reviewsData": findReviewsData,
-            }
+        findBook.reviewsData = findReviewsData
 
-        })
+        return res.status(201).send({ status: false, message: "No book found", data: findBook })
+
+        // Sending response according to project requirement
+        // return res.status(201).send({
+        //     status: true,
+        //     message: "Book list",
+        //     data: {
+        //         "_id": findBook._id,
+        //         "title": findBook.title,
+        //         "excerpt": findBook.excerpt,
+        //         "userId": findBook.userId,
+        //         "category": findBook.category,
+        //         "subcategory": findBook.subcategory,
+        //         "deleted": findBook.isDeleted,
+        //         "reviews": findBook.reviews,
+        //         "deletedAt": findBook.deletedAt,
+        //         "releasedAt": findBook.releasedAt,
+        //         "createdAt": findBook.createdAt,
+        //         "updatedAt": findBook.updatedAt,
+        //         "reviewsData": findReviewsData,
+        //     }
+
+        // })
 
     }
     catch (err) {

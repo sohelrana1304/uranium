@@ -96,18 +96,19 @@ const userLogin = async function(req, res){
             return res.status(400).send({ status: false, msg: "Please enter password" })
         }
         // Checking the inputted email id from request body from existing database for a valid user
-        let findEmail = await userModel.findOne({email: data.email})
-        if(!findEmail){
-            return res.status(400).send({ status: false, msg: "Email id is not registered" })
-        }
-        // Checking the inputted phone no from request body from existing database for a valid user
-        let findPassword = await userModel.findOne({password: data.password})
-        if(!findPassword){
-            return res.status(400).send({ status: false, msg: "Password is not matched" })
+        let findUser = await userModel.findOne({email: data.email, password: data.password})
+        if(!findUser){
+            return res.status(400).send({ status: false, msg: "Enter correct email id and password" })
         }
 
+        // Checking the inputted phone no from request body from existing database for a valid user
+        // let findPassword = await userModel.findOne({password: data.password})
+        // if(!findPassword){
+        //     return res.status(400).send({ status: false, msg: "Password is not matched" })
+        // }
+
         // Generating a token after every successfull login and also adding token expiration time
-        let token = await jwt.sign({userId: findEmail._id.toString()}, "India", {expiresIn: '24h'})
+        let token = await jwt.sign({userId: findUser._id.toString()}, "India", {expiresIn: '24h'})
         res.status(201).send({status: true, msg:"Log in successfull", token})
 
     }
