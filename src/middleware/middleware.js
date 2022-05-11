@@ -9,16 +9,16 @@ let authentication = async function (req, res, next) {
         if (!token) return res.status(404).send({ status: false, msg: "Token must be present" });
         let decodedToken = jwt.verify(token, "India");
 
-        // if (err) {
-        //     if (err.name === 'JsonWebTokenError')
-        //         return res.send(createError.Unauthorized())
-        // } else {
-        //     return res.send(createError.Unauthorized(err.message))
-        // }
+        /* if (err) {
+            if (err.name === 'JsonWebTokenError')
+                return res.send(createError.Unauthorized())
+        } else {
+            return res.send(createError.Unauthorized(err.message))
+        }
 
+        if (!decodedToken)
+            return res.status(400).send({ status: false, msg: "Invalid Token" }) */
 
-        // if (!decodedToken)
-        //     return res.status(400).send({ status: false, msg: "Invalid Token" })
         req.tokenUserId = decodedToken.userId
 
         next();
@@ -36,7 +36,7 @@ const authorization = async function (req, res, next) {
         let user = req.body.userId
         let user2 = req.params.bookId
 
-        if (validator.isValidObjectId.user2) {
+        if (validator.isValidObjectId(user2)) {
             // user = req.params.userId
             let getUserId = await bookModel.findById({ _id: user2 }).select({ userId: 1 })
             // console.log(getUserId)

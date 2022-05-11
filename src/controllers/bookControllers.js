@@ -147,7 +147,7 @@ const getBookById = async function (req, res) {
             message: "Book list",
             data: {
                 "_id": findBook._id,
-                "title": findBook.title,
+                "title": findBook.title, 
                 "excerpt": findBook.excerpt,
                 "userId": findBook.userId,
                 "category": findBook.category,

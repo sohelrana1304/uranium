@@ -2,18 +2,18 @@
 const mongoose = require('mongoose')
 
 
-const isValid = function(value){
-    if (typeof (value)==='undefined'|| typeof(value)=== null){
+const isValid = function (value) {
+    if (typeof (value) === 'undefined' || typeof (value) === null) {
         return false
     }
-    if (typeof(value)=== "string" && (value).trim().length == 0){
+    if (typeof (value) === "string" && (value).trim().length == 0) {
         return false
     } return true
 
 }
 
 const isValidObjectId = (ObjectId) => {
-    return mongoose.Types.ObjectId.isValid (ObjectId)
+    return mongoose.Types.ObjectId.isValid(ObjectId)
 }
 
 
