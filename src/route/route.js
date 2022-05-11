@@ -21,8 +21,11 @@ router.put("/books/:bookId", MW.authentication, MW.authorization, bookController
 router.delete("/books/:bookId", MW.authentication, MW.authorization, bookController.deletedBook)
 
 
-
 router.post("/books/:bookId/review", reviewController.postReview)
+
+router.put("/books/:bookId/review/:reviewId", reviewController.updateReview)
+
+router.delete("/books/:bookId/review/:reviewId", reviewController.deleteReview)
 
 
 
