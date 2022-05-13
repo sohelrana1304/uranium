@@ -27,17 +27,10 @@ const postReview = async function (req, res) {
         }
         const { reviewedBy, rating, review } = data
 
-        if (validator.isValid(reviewedBy)) {
-            // return res.status(400).send({ status: false, message: "Please enter reviewr name" })
-            return data.reviewedBy = "Guest"
-
-        }
-
-
-
-
-        // if (!reviewedBy){
+        // if (validator.isValid(reviewedBy)) {
+        //     // return res.status(400).send({ status: false, message: "Please enter reviewr name" })
         //     return data.reviewedBy = "Guest"
+
         // }
 
         // if (!validator.isValid(reviewedAt)) {
@@ -122,19 +115,49 @@ const updateReview = async function (req, res) {
         }
         const { reviewedBy, rating, review } = data
 
-        if (rating) {
+        let reviewKeys = ["reviewedBy", "rating", "review"]
+        for (let i = 0; i < Object.keys(data).length; i++) {
+            let keyPresent = reviewKeys.includes(Object.keys(data)[i])
+            if (!keyPresent)
+                return res.status(400).send({ status: false, message: "Wrong Key present" })
+        }
+
+        if (Object.keys(data).includes('reviewedBy')) {
+            if (!validator.isValid(data.reviewedBy)) {
+                return res.status(400).send({ status: false, message: "ReviewedBy Is Required" })
+            }
+        }
+
+        if (Object.keys(data).includes('rating')) {
+            if (!validator.isValid(data.rating)) {
+                return res.status(400).send({ status: false, message: "Rating Is Required" })
+            }
             //setting rating limit between 1-5.
             if (!(rating >= 1 && rating <= 5)) {
                 return res.status(400).send({ status: false, message: "Rating must be in between 1 to 5." })
             }
         }
 
+        if (Object.keys(data).includes('review')) {
+            if (!validator.isValid(data.review)) {
+                return res.status(400).send({ status: false, message: "Review Is Required" })
+            }
+        }
+
+        // if (rating) {
+        //     //setting rating limit between 1-5.
+        //     if (!(rating >= 1 && rating <= 5)) {
+        //         return res.status(400).send({ status: false, message: "Rating must be in between 1 to 5." })
+        //     }
+        // }
+
         let updateReview = await reviewModel.findByIdAndUpdate({ _id: reviewId },
-            { $set: { reviewedBy: reviewedBy, rating: rating, review: review } }, { new: true }).select({createdAt: 0, updatedAt: 0, __v: 0})
+            { $set: { reviewedBy: reviewedBy, rating: rating, review: review } }, { new: true })
+            .select({ createdAt: 0, updatedAt: 0, __v: 0 })
 
 
         findBookId.updateReview = updateReview
-    
+
         return res.status(200).send({
             status: true,
             message: "Review has been updated successfully",
@@ -175,18 +198,18 @@ const deleteReview = async function (req, res) {
         if (findBookId.reviews == 0) {
             return res.status(404).send({ status: false, message: "Book does not have any review" })
         }
-        
+
         if (findReviewId.isDeleted == true) {
             return res.status(400).send({ status: false, message: "Review is already deleted" })
         }
 
-        let deleteReview = await reviewModel.findByIdAndUpdate({_id: reviewId},
-            {$set: {isDeleted: true}}, {new: true})
+        let deleteReview = await reviewModel.findByIdAndUpdate({ _id: reviewId },
+            { $set: { isDeleted: true } }, { new: true })
 
         let decreaseReviewCount = await bookModel.findOneAndUpdate({ _id: bookId }, { $inc: { reviews: -1 } },
             { new: true, upsert: true })
 
-        return res.status(200).send({ status: true, message: "Review has been deleted successfully" })    
+        return res.status(200).send({ status: true, message: "Review has been deleted successfully" })
 
     }
     catch (err) {

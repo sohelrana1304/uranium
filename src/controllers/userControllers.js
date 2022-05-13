@@ -17,6 +17,11 @@ const createUser = async function (req, res) {
         if (!validator.isValid(title)) {
             return res.status(400).send({ status: false, msg: "Please enter title" })
         }
+
+        if (["Mr", "Mrs", "Miss"].indexOf(title) == -1) { 
+            return res.status(400).send({ status: false, message: "Title should be Mr, Miss or Mrs" }) 
+        }
+
         // Name is mandatory
         if (!validator.isValid(name)) {
             return res.status(400).send({ status: false, msg: "Please enter name" })
@@ -102,7 +107,7 @@ const userLogin = async function(req, res){
         }
 
         // Generating a token after every successfull login and also adding token expiration time
-        let token = await jwt.sign({userId: findUser._id.toString()}, "India", {expiresIn: '30d'})
+        let token = await jwt.sign({userId: findUser._id.toString()}, "India", {expiresIn: '30s'})
         res.status(201).send({status: true, msg:"Log in successfull", token})
 
     }

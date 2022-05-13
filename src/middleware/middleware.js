@@ -19,6 +19,9 @@ let authentication = async function (req, res, next) {
         if (!decodedToken)
             return res.status(400).send({ status: false, msg: "Invalid Token" }) */
 
+        // let a = Math.floor(Date.now() / 1000)
+        // if (decodedToken.exp < a) return res.status(401).send({ status: false, msg: "token is expired" })
+
         req.tokenUserId = decodedToken.userId
 
         next();
@@ -37,7 +40,12 @@ const authorization = async function (req, res, next) {
         let user2 = req.params.bookId
 
         if (validator.isValidObjectId(user2)) {
-            // user = req.params.userId
+            // user2 = req.params.userId
+            let uniqueBlogId = await bookModel.findOne({ _id: user2 })
+            if (!uniqueBlogId) {
+                return res.status(404).send({ status: false, message: "Book not found" })
+            }
+
             let getUserId = await bookModel.findById({ _id: user2 }).select({ userId: 1 })
             // console.log(getUserId)
             let findUserId = getUserId.userId.toString() //for extrxting id like this - 626ba1610a95a6c52d0b4d0b
@@ -45,13 +53,13 @@ const authorization = async function (req, res, next) {
             if (findUserId != tokenUserId) {
                 return res.status(401).send({ status: false, message: "User should log in" })
             }
-            
+
         } else if (user) {
             // console.log("For User1: ", user, tokenUserId)
             if (user != tokenUserId) {
                 return res.status(401).send({ msg: "User must login" })
             }
-            
+
         }
 
         next();
