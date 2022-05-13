@@ -27,12 +27,23 @@ const postReview = async function (req, res) {
         }
         const { reviewedBy, rating, review } = data
 
-        if (!validator.isValid(reviewedBy)) {
-            return res.status(400).send({ status: false, message: "Please enter reviewr name" })
+        if (validator.isValid(reviewedBy)) {
+            // return res.status(400).send({ status: false, message: "Please enter reviewr name" })
+            return data.reviewedBy = "Guest"
+
         }
+
+
+
+
+        // if (!reviewedBy){
+        //     return data.reviewedBy = "Guest"
+        // }
+
         // if (!validator.isValid(reviewedAt)) {
         //     return res.status(400).send({ status: false, message: "Please enter review date" })
         // }
+
         if (!validator.isValid(rating)) {
             return res.status(400).send({ status: false, message: "Please give ratings" })
         }
@@ -83,7 +94,7 @@ const updateReview = async function (req, res) {
             return res.status(400).send({ status: false, message: "Review id is not valid" })
         }
 
-        let findBookId = await bookModel.findById({ _id: bookId })
+        let findBookId = await bookModel.findById({ _id: bookId }).lean()
         if (!findBookId) {
             return res.status(404).send({ status: false, message: "Book not found" })
         }
@@ -119,12 +130,16 @@ const updateReview = async function (req, res) {
         }
 
         let updateReview = await reviewModel.findByIdAndUpdate({ _id: reviewId },
-            { $set: { reviewedBy: reviewedBy, rating: rating, review: review } }, { new: true })
+            { $set: { reviewedBy: reviewedBy, rating: rating, review: review } }, { new: true }).select({createdAt: 0, updatedAt: 0, __v: 0})
 
+
+        findBookId.updateReview = updateReview
+    
         return res.status(200).send({
             status: true,
             message: "Review has been updated successfully",
-            data: updateReview
+            // data: updateReview
+            data: findBookId
         })
 
     }
