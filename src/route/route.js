@@ -5,29 +5,31 @@ const bookController = require("../controllers/bookControllers")
 const reviewController = require("../controllers/reviewControllers")
 const MW = require("../middleware/middleware")
 
+// User API
 // To rgistar a user
 router.post("/register", userController.createUser)
 // Login for a user
 router.post("/login", userController.userLogin)
+
+// Book API
 // To create a new book
-router.post("/books", MW.authentication, MW.authorization, bookController.createBook) // Done
+router.post("/books", MW.authentication, MW.authorization, bookController.createBook)
 // To get all the books data
-router.get("/books", MW.authentication, bookController.getBook) // Done
+router.get("/books", MW.authentication, bookController.getBook)
 // To get books with reviews
-router.get("/books/:bookId", MW.authentication, bookController.getBookById) // Done
+router.get("/books/:bookId", MW.authentication, bookController.getBookById)
 // To update a book by bookId
-router.put("/books/:bookId", MW.authentication, MW.authorization, bookController.updateBook) // Done
+router.put("/books/:bookId", MW.authentication, MW.authorization, bookController.updateBook)
 // To delete a book by bookId
 router.delete("/books/:bookId", MW.authentication, MW.authorization, bookController.deletedBook)
 
-
-router.post("/books/:bookId/review", /* MW.authentication, */ reviewController.postReview)
-
-router.put("/books/:bookId/review/:reviewId", /* MW.authentication, */ reviewController.updateReview)
-
-router.delete("/books/:bookId/review/:reviewId", /* MW.authentication, */ reviewController.deleteReview)
-
-
+// Review API
+// To post a review
+router.post("/books/:bookId/review", reviewController.postReview)
+// To update a review
+router.put("/books/:bookId/review/:reviewId", reviewController.updateReview)
+// To delete a review
+router.delete("/books/:bookId/review/:reviewId", reviewController.deleteReview)
 
 
 module.exports = router;

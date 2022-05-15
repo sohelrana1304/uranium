@@ -17,11 +17,10 @@ const createUser = async function (req, res) {
         if (!validator.isValid(title)) {
             return res.status(400).send({ status: false, msg: "Please enter title" })
         }
-
-        if (["Mr", "Mrs", "Miss"].indexOf(title) == -1) { 
-            return res.status(400).send({ status: false, message: "Title should be Mr, Miss or Mrs" }) 
+        // Selecting title from Mr, Mrs or Miss
+        if (["Mr", "Mrs", "Miss"].indexOf(title) == -1) {
+            return res.status(400).send({ status: false, message: "Title should be Mr, Miss or Mrs" })
         }
-
         // Name is mandatory
         if (!validator.isValid(name)) {
             return res.status(400).send({ status: false, msg: "Please enter name" })
@@ -32,7 +31,7 @@ const createUser = async function (req, res) {
         }
         // Phone no is mandatory
         if (!validator.isValid(phone)) {
-            return res.status(400).send({ status: false, msg: "Please enter phone" })
+            return res.status(400).send({ status: false, msg: "Please enter phone no" })
         }
         // Password is mandatory
         if (!validator.isValid(password)) {
@@ -67,6 +66,28 @@ const createUser = async function (req, res) {
             return res.status(400).send({ msg: "Password length should be 8 to 15 digits and enter atleast one uppercase or lowercase" })
         }
 
+        // If street key is present under address, street key should not be empty
+        if (Object.keys(data.address).includes('street')) {
+            if (!validator.isValid(data.address.street)) {
+                return res.status(400).send({ staus: false, message: "Street key cannot be empty" })
+            }
+        }
+        // If street key is present under address, city key should not be empty
+        if (Object.keys(data.address).includes('city')) {
+            if (!validator.isValid(data.address.city)) {
+                return res.status(400).send({ staus: false, message: "City key cannot be empty" })
+            }
+        }
+        // If street key is present under pincode, street key should not be empty
+        if (Object.keys(address).includes('pincode')) {
+            // Setting pincode for 6 digits only
+            let pinCodeValidation = /^[0-9]{6}$/;
+            if (!(pinCodeValidation.test(address.pincode))) {
+                return res.status(400).send({ staus: false, message: "PIN code should contain 6 digits only and not start with 0 [zero]" })
+            }
+
+        }
+
         // Taking data from request body and creating a user
         let createUser = await userModel.create(data)
         return res.status(201).send({ status: true, msg: "User has been created successfully", createUser })
@@ -80,8 +101,8 @@ const createUser = async function (req, res) {
 
 
 // Login for a user
-const userLogin = async function(req, res){
-    try{
+const userLogin = async function (req, res) {
+    try {
         const data = req.body
         // Checking input from req.body
         if (Object.keys(data) == 0) {
@@ -94,21 +115,21 @@ const userLogin = async function(req, res){
 
         // Email id is mandatory
         if (!validator.isValid(email)) {
-            return res.status(400).send({ status: false, msg: "Please enter email id" })
+            return res.status(401).send({ status: false, msg: "Please enter email id" })
         }
         // Password is mandatory
         if (!validator.isValid(password)) {
-            return res.status(400).send({ status: false, msg: "Please enter password" })
+            return res.status(401).send({ status: false, msg: "Please enter password" })
         }
         // Checking the inputted email id from request body from existing database for a valid user
-        let findUser = await userModel.findOne({email: data.email, password: data.password})
-        if(!findUser){
-            return res.status(400).send({ status: false, msg: "Enter correct email id and password" })
+        let findUser = await userModel.findOne({ email: data.email, password: data.password })
+        if (!findUser) {
+            return res.status(401).send({ status: false, msg: "Enter correct email id and password" })
         }
 
         // Generating a token after every successfull login and also adding token expiration time
-        let token = await jwt.sign({userId: findUser._id.toString()}, "India", {expiresIn: '30s'})
-        res.status(201).send({status: true, msg:"Log in successfull", token})
+        let token = await jwt.sign({ userId: findUser._id.toString() }, "India", { expiresIn: '30d' })
+        res.status(201).send({ status: true, msg: "Log in successfull", token })
 
     }
     catch (err) {
@@ -118,6 +139,5 @@ const userLogin = async function(req, res){
 }
 
 
-// Exporting all the handelers for using publically
 module.exports.createUser = createUser
 module.exports.userLogin = userLogin
