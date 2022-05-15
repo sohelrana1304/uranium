@@ -4,6 +4,7 @@ const bookModel = require("../models/bookModel");
 const userModel = require("../models/userModel");
 const validator = require("../validator/validator")
 
+// Authentication
 let authentication = async function (req, res, next) {
     try {
         let token = req.headers["x-api-key"]
@@ -23,7 +24,7 @@ let authentication = async function (req, res, next) {
     }
 }
 
-
+// Authorization
 const authorization = async function (req, res, next) {
     try {
         let tokenUserId = req.tokenUserId
@@ -32,7 +33,7 @@ const authorization = async function (req, res, next) {
 
         if (user2) {
             // user2 = req.params.userId
-            
+
             // Checking the inputted bookId valid or not
             if (!validator.isValidObjectId(user2)) {
                 return res.status(404).send({ status: false, message: "Book id is not valid" })
