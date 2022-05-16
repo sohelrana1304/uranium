@@ -3,7 +3,6 @@ const bookModel = require("../models/bookModel")
 const reviewModel = require("../models/reviewModel")
 const userModel = require("../models/userModel")
 const validator = require("../validator/validator")
-const mongoose = require('mongoose')
 
 // To create a book
 const createBook = async function (req, res) {
@@ -100,7 +99,8 @@ const getBook = async function (req, res) {
 
         // Finding books with inputted data from query and selecting required fields and sorting those books in Alphabatical order
         let findBooks = await bookModel.find(data, { isDeleted: false })
-            .select({ subcategory: 0, ISBN: 0, createdAt: 0, updatedAt: 0, __v: 0 }).sort({ "title": 1 })
+            .select({ subcategory: 0, ISBN: 0, deletedAt: 0, createdAt: 0, updatedAt: 0, __v: 0 })
+            .sort({ "title": 1 })
         // Checking the length of finded books
         if (findBooks.length == 0) {
             return res.status(404).send({ status: false, message: "No book found" })
@@ -125,7 +125,8 @@ const getBookById = async function (req, res) {
         }
 
         // Finding the book with given book id from db
-        let findBook = await bookModel.findById({ _id: bookId }).select({ISBN: 0, __v: 0}).lean()
+        let findBook = await bookModel.findOne({ _id: bookId, isDeleted: false })
+            .select({ ISBN: 0, __v: 0 }).lean()
         // console.log(findBook)
         if (!findBook) {
             return res.status(404).send({ status: false, message: "No book found" })
@@ -200,14 +201,6 @@ const updateBook = async function (req, res) {
         if (Object.keys(data) == 0) {
             return res.status(400).send({ status: false, message: "Nothing to update, please provide some updation details" })
         }
-
-        // let bookKeys = ["title", "excerpt", "releasedAt", "ISBN"]
-        // for (let i = 0; i < Object.keys(req.body).length; i++) {
-        //     let keyPresent = bookKeys.includes(Object.keys(req.body)[i])
-        //     if (!keyPresent) {
-        //         return res.status(400).send({ status: false, message: "Wrong Key present" })
-        //     }
-        // }
 
         // If title key is present in request body but no data provided, it will ask to input data
         if (Object.keys(req.body).includes('title')) {

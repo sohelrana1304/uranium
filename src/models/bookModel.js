@@ -23,8 +23,6 @@ const bookSchema = new mongoose.Schema({
 
     releasedAt: { type: Date, required: true, trim: true }
 
-    // releasedAt: { type: Date, required: [true, "Date is required"], trim: true }
-
 }, { timestamps: true })
 
 

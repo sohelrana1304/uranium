@@ -16,7 +16,7 @@ const postReview = async function (req, res) {
         // Finding that bookId from existing db
         let checkBookId = await bookModel.findById({ _id: bookId }).select({ISBN: 0, __v: 0})
         if (!checkBookId) {
-            return res.status(400).send({ status: false, message: "Book id is not valid" })
+            return res.status(400).send({ status: false, message: "No book found" })
         }
 
         // Checking the book document for true
@@ -65,7 +65,7 @@ const postReview = async function (req, res) {
         // Updating the review count for the inputted bookId's document
         if (createReview) {
             let updateReviewCount = await bookModel.findOneAndUpdate({ _id: bookId }, { $inc: { reviews: 1 } },
-                { new: true, upsert: true })
+                { new: true})
         }
 
         // From the newly created review's document, deselecting not necessary things
@@ -82,7 +82,6 @@ const postReview = async function (req, res) {
         return res.status(201).send({
             status: true,
             message: "Review is added successfully",
-            // data: responseReview
             data: getBookDocument
         })
 
@@ -151,14 +150,8 @@ const updateReview = async function (req, res) {
         if (Object.keys(data) == 0) {
             return res.status(400).send({ status: false, message: "Bad request, no data found" })
         }
-        const { reviewedBy, rating, review } = data
 
-        // let reviewKeys = ["reviewedBy", "rating", "review"]
-        // for (let i = 0; i < Object.keys(data).length; i++) {
-        //     let keyPresent = reviewKeys.includes(Object.keys(data)[i])
-        //     if (!keyPresent)
-        //         return res.status(400).send({ status: false, message: "Wrong Key present" })
-        // }
+        const { reviewedBy, rating, review } = data
 
         // If reviewdBy key is present in request body but no data provided, it will ask to input data
         if (Object.keys(data).includes('reviewedBy')) {
@@ -195,7 +188,6 @@ const updateReview = async function (req, res) {
         return res.status(200).send({
             status: true,
             message: "Review has been updated successfully",
-            // data: updateReview
             data: findBookId
         })
 
@@ -259,7 +251,7 @@ const deleteReview = async function (req, res) {
 
         // Updating review count after deletation of review    
         let decreaseReviewCount = await bookModel.findOneAndUpdate({ _id: bookId }, { $inc: { reviews: -1 } },
-            { new: true, upsert: true })
+            { new: true})
 
         // In response giving deletation message
         return res.status(200).send({ status: true, message: "Review has been deleted successfully" })

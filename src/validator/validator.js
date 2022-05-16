@@ -1,4 +1,3 @@
-// Validating inputs
 const mongoose = require('mongoose')
 
 
@@ -12,6 +11,7 @@ const isValid = function (value) {
 
 }
 
+// Validating objec id
 const isValidObjectId = (ObjectId) => {
     return mongoose.Types.ObjectId.isValid(ObjectId)
 }
