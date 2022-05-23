@@ -13,7 +13,7 @@ router.post("/login", userController.userLogin)
 
 // Book API
 // To create a new book
-router.post("/books", MW.authentication, MW.authorization, bookController.createBook)
+router.post("/books", /* MW.authentication, MW.authorization, */ bookController.createBook)
 // To get all the books data
 router.get("/books", MW.authentication, bookController.getBook)
 // To get books with reviews

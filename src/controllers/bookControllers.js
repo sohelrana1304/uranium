@@ -3,6 +3,7 @@ const bookModel = require("../models/bookModel")
 const reviewModel = require("../models/reviewModel")
 const userModel = require("../models/userModel")
 const validator = require("../validator/validator")
+const aws = require("../controllers/awsController")
 
 // To create a book
 const createBook = async function (req, res) {
@@ -13,7 +14,7 @@ const createBook = async function (req, res) {
             return res.status(400).send({ status: false, msg: "Bad Request, No Data Provided" })
         };
 
-        const { title, excerpt, userId, ISBN, category, subcategory, isDeleted, releasedAt } = data
+        const { title, excerpt, userId, bookCover, ISBN, category, subcategory, isDeleted, releasedAt } = data
 
         // Title is mandatory
         if (!validator.isValid(title)) {
@@ -70,6 +71,18 @@ const createBook = async function (req, res) {
         let dateRgx = /^\d{4}\-(0?[1-9]|1[012])\-(0?[1-9]|[12][0-9]|3[01])$/
         if (!dateRgx.test(releasedAt)) {
             return res.status(400).send({ status: false, message: "Please provide valid date format YYYY-MM-DD" });
+        }
+
+        let files= req.files
+        if(files && files.length>0){
+            //upload to s3 and get the uploaded link
+            // res.send the link back to frontend/postman
+            let uploadedFileURL= await aws.uploadFile( files[0] )
+            // res.status(201).send({msg: "file uploaded succesfully", data: uploadedFileURL})
+            data.bookCover = uploadedFileURL
+        }
+        else{
+            res.status(400).send({ msg: "No file found" })
         }
 
         // Creating a new book

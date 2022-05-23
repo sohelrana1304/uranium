@@ -9,6 +9,8 @@ const bookSchema = new mongoose.Schema({
 
     userId: { type: ObjectId, ref: "User", required: true, trim: true }, // Referring to the User collection
 
+    bookCover: {type: String, required: true},
+
     ISBN: { type: String, required: true, trim: true },
 
     category: { type: String, required: true, trim: true },
