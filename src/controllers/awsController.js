@@ -3,6 +3,8 @@ const aws = require("aws-sdk")
 // router.get("/test-me", function (req, res) {
 //     res.send("My first ever api!")
 // })
+
+
 // s3 and cloud stodare
 //  step1: multer will be used to get access to the file in nodejs( from previous session learnings)
 //  step2:[BEST PRACTISE]:- always write s2 upload function separately- in a separate file/function..exptect it to take file as input and return the uploaded file as output
@@ -15,12 +17,15 @@ const aws = require("aws-sdk")
 // -you can never use await on callback..if you awaited something , then you can be sure it is within a promise
 // -how to write promise:- wrap your entire code inside: "return new Promise( function(resolve, reject) { "...and when error - return reject( err )..else when all ok and you have data, return resolve (data)
 
+
+// AWS configuration
 aws.config.update({
     accessKeyId: "AKIAY3L35MCRUJ6WPO6J",
     secretAccessKey: "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",
     region: "ap-south-1"
 })
 
+// To upload a file
 let uploadFile = async ( file) => {
    return new Promise( function(resolve, reject) {
     // this function will upload file to aws and return the link

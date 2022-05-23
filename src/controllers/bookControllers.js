@@ -9,10 +9,10 @@ const aws = require("../controllers/awsController")
 const createBook = async function (req, res) {
     try {
         const data = req.body
-        // Checking input from req.body
-        if (Object.keys(data) == 0) {
-            return res.status(400).send({ status: false, msg: "Bad Request, No Data Provided" })
-        };
+        // // Checking input from req.body
+        // if (Object.keys(data) == 0) {
+        //     return res.status(400).send({ status: false, msg: "Bad Request, No Data Provided" })
+        // };
 
         const { title, excerpt, userId, bookCover, ISBN, category, subcategory, isDeleted, releasedAt } = data
 
@@ -72,6 +72,8 @@ const createBook = async function (req, res) {
         if (!dateRgx.test(releasedAt)) {
             return res.status(400).send({ status: false, message: "Please provide valid date format YYYY-MM-DD" });
         }
+
+        data.subcategory = subcategory.split(" ")
 
         let files= req.files
         if(files && files.length>0){
